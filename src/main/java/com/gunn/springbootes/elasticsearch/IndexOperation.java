@@ -50,6 +50,8 @@ public class IndexOperation {
                 builder.startObject("message");
                 {
                     builder.field("type", "text");
+                    builder.field("analyzer", "ik_max_word");
+                    builder.field("search_analyzer", "ik_smart");
                 }
                 builder.endObject();
             }
