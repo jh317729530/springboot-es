@@ -18,6 +18,7 @@ public class Application {
 		SpringApplication.run(Application.class, args);
 		indexOperation.deleteIndex("test");
 		indexOperation.createIndex("test");
+		indexOperation.createMapping("test","testMapping");
 	}
 
 	@Resource
