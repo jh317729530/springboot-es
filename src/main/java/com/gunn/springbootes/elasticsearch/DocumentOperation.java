@@ -1,6 +1,8 @@
 package com.gunn.springbootes.elasticsearch;
 
 import com.gunn.springbootes.annotation.Ignore;
+import com.gunn.springbootes.annotation.Index;
+import com.gunn.springbootes.annotation.Type;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
@@ -29,7 +31,18 @@ public abstract class DocumentOperation<T> {
     /**
      * 插入文档
      */
-    protected void indexDocument(String indexName, String typeName, T t) {
+    protected void indexDocument(T t) {
+        if (!(t instanceof BaseDocument)) {
+            throw new IllegalArgumentException("index object is not instance of BaseDocument");
+        }
+        Class<?> clazz = t.getClass();
+        if (!clazz.isAnnotationPresent(Index.class) || !clazz.isAnnotationPresent(Type.class)) {
+            throw new IllegalArgumentException("index class has no @Index or @Type");
+        }
+        Index index = clazz.getAnnotation(Index.class);
+        Type type = clazz.getAnnotation(Type.class);
+        String indexName = index.value();
+        String typeName = type.value();
         IndexRequest indexRequest = new IndexRequest(indexName, typeName, ((BaseDocument)t).getId());
         indexRequest.routing(((BaseDocument) t).getRouting());
         XContentBuilder builder = null;
@@ -46,6 +59,10 @@ public abstract class DocumentOperation<T> {
             log.error(e.getMessage(), e);
         }
     }
+
+//    protected T getByDocId(String fieldId) {
+//
+//    }
 
     /**
      * 将实体类型转换为对应的builder

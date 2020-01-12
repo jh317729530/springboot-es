@@ -6,12 +6,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 忽略字段，使得es插入、更新、查询时，无视该字段
+ * 类型名称
  *
  * @author ganjunhui
- * @date 2020/1/12 3:29 下午
+ * @date 2020/1/12 9:04 下午
  */
-@Target(ElementType.FIELD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Ignore {
+public @interface Type {
+
+    String value();
 }
