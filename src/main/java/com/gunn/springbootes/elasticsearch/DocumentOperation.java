@@ -79,19 +79,9 @@ public abstract class DocumentOperation<T> {
             Class<?> fieldClazz = field.getType();
             String name = field.getName();
             Object o = field.get(t);
-            if (String.class.equals(fieldClazz)) {
-                builder.field(name, o);
-            }
             if (Date.class.equals(fieldClazz)) {
                 builder.timeField(name, o);
-            }
-            if (Integer.class.equals(fieldClazz)) {
-                builder.field(name, o);
-            }
-            if (fieldClazz.isArray()) {
-                builder.array(name, o);
-            }
-            if (Map.class.equals(fieldClazz)) {
+            } else {
                 builder.field(name, o);
             }
         } catch (IllegalAccessException | IOException e) {

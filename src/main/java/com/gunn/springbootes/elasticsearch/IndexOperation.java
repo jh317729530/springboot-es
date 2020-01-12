@@ -67,11 +67,7 @@ public class IndexOperation {
 
                 Map<String, String[]> relations = property.getRelations();
                 if (null != relations && CollectionUtils.isNotEmpty(relations.entrySet())) {
-                    builder.startObject("relations");
-                    for (Map.Entry<String, String[]> entry : relations.entrySet()) {
-                        builder.field(entry.getKey(), entry.getValue());
-                    }
-                    builder.endObject();
+                    builder.field("relations", relations);
                 }
                 builder.endObject();
             }
