@@ -5,7 +5,6 @@ import com.gunn.springbootes.elasticsearch.DocumentOperation;
 import com.gunn.springbootes.elasticsearch.IndexOperation;
 import com.gunn.springbootes.elasticsearch.Property;
 import com.gunn.springbootes.entity.Field;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -48,6 +47,6 @@ public class FieldQuery extends DocumentOperation<Field> {
         field.setFieldId(1234);
         field.setFieldName("我的广州场地");
         field.setStoreName("我的广州空间");
-        indexDocument("field", "field", field);
+        indexDocument(field);
     }
 }

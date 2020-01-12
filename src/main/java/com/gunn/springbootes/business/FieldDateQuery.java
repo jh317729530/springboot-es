@@ -18,6 +18,6 @@ public class FieldDateQuery extends DocumentOperation<FieldDate> {
         fieldDate.setRelationDate("2020-01-12");
         fieldDate.getJoinField().put("parent", "1234_10");
         fieldDate.setRouting("1234_10");
-        indexDocument("field", "field", fieldDate);
+        indexDocument(fieldDate);
     }
 }
