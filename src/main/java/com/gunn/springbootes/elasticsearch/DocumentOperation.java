@@ -31,6 +31,7 @@ public abstract class DocumentOperation<T> {
      */
     protected void indexDocument(String indexName, String typeName, T t) {
         IndexRequest indexRequest = new IndexRequest(indexName, typeName, ((BaseDocument)t).getId());
+        indexRequest.routing(((BaseDocument) t).getRouting());
         XContentBuilder builder = null;
         try {
             builder = entityToBuilder(t);

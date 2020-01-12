@@ -1,5 +1,6 @@
 package com.gunn.springbootes.entity;
 
+import com.gunn.springbootes.elasticsearch.BaseDocument;
 import lombok.Data;
 
 import java.util.HashMap;
@@ -10,7 +11,7 @@ import java.util.Map;
  * @date 2020/1/12 3:19 下午
  */
 @Data
-public class FieldDate {
+public class FieldDate extends BaseDocument {
 
     private Integer fieldId;
 

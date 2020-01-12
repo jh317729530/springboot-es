@@ -1,5 +1,6 @@
 package com.gunn.springbootes;
 
+import com.gunn.springbootes.business.FieldDateQuery;
 import com.gunn.springbootes.business.FieldQuery;
 import com.gunn.springbootes.elasticsearch.IndexOperation;
 import org.springframework.boot.SpringApplication;
@@ -14,6 +15,8 @@ public class Application {
 
 	private static FieldQuery fieldQuery;
 
+	private static FieldDateQuery fieldDateQuery;
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
@@ -26,6 +29,8 @@ public class Application {
 		indexOperation.deleteIndex("field");
 		fieldQuery.createIndexAndMapping();
 		fieldQuery.index();
+		fieldDateQuery.index();
+
 	}
 
 	@Resource
@@ -36,5 +41,10 @@ public class Application {
 	@Resource
 	public void setField(FieldQuery fieldQuery) {
 		Application.fieldQuery = fieldQuery;
+	}
+
+	@Resource
+	public void setFieldDateQuery(FieldDateQuery fieldDateQuery) {
+		Application.fieldDateQuery = fieldDateQuery;
 	}
 }
