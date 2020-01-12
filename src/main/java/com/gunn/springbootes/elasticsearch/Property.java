@@ -3,6 +3,7 @@ package com.gunn.springbootes.elasticsearch;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -14,6 +15,12 @@ import java.util.Map;
 @Data
 @Builder
 public class Property {
+
+    public static final Map<String, String> IK = new HashMap<>();
+
+    static {
+        IK.put("search_analyzer", "ik_smart");
+    }
 
     /**
      * 字段名

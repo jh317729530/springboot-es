@@ -1,6 +1,5 @@
 package com.gunn.springbootes.elasticsearch;
 
-import com.gunn.springbootes.util.JsonUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -69,7 +68,7 @@ public class IndexOperation {
                 if (null != relations && CollectionUtils.isNotEmpty(relations.entrySet())) {
                     builder.startObject("relations");
                     for (Map.Entry<String, String[]> entry : relations.entrySet()) {
-                        builder.field(entry.getKey(), JsonUtil.getJsonFromObject(entry.getValue()));
+                        builder.field(entry.getKey(), entry.getValue());
                     }
                     builder.endObject();
                 }
