@@ -1,5 +1,6 @@
 package com.gunn.springbootes.entity;
 
+import com.gunn.springbootes.annotation.Ignore;
 import com.gunn.springbootes.annotation.Index;
 import com.gunn.springbootes.annotation.Type;
 import com.gunn.springbootes.elasticsearch.BaseDocument;
@@ -26,10 +27,18 @@ public class Field extends BaseDocument {
 
     private String storeName;
 
+    @Ignore
+    private Integer rentType;
+
     private Map<String, String> joinField;
 
     {
         joinField = new HashMap<>();
         joinField.put("name", "parent");
+    }
+
+    @Override
+    public String getRouting() {
+        return fieldId + "_" + rentType;
     }
 }

@@ -1,5 +1,6 @@
 package com.gunn.springbootes.entity;
 
+import com.gunn.springbootes.annotation.Ignore;
 import com.gunn.springbootes.annotation.Index;
 import com.gunn.springbootes.annotation.Type;
 import com.gunn.springbootes.elasticsearch.BaseDocument;
@@ -17,8 +18,10 @@ import java.util.Map;
 @Data
 public class FieldDate extends BaseDocument {
 
+    @Ignore
     private Integer fieldId;
 
+    @Ignore
     private Integer rentType;
 
     private String relationDate;
@@ -30,4 +33,8 @@ public class FieldDate extends BaseDocument {
         joinField.put("name", "dateChild");
     }
 
+    @Override
+    public String getRouting() {
+        return fieldId + "_" + rentType;
+    }
 }
