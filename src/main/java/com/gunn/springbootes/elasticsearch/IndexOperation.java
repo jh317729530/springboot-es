@@ -1,6 +1,9 @@
 package com.gunn.springbootes.elasticsearch;
 
+import com.gunn.springbootes.util.JsonUtil;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
@@ -12,11 +15,15 @@ import org.elasticsearch.common.xcontent.XContentFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author ganjunhui
  * @date 2020/1/11 3:39 下午
  */
+@Slf4j
 @Component
 public class IndexOperation {
 
@@ -38,27 +45,50 @@ public class IndexOperation {
         restHighLevelClient.indices().delete(deleteIndexRequest, RequestOptions.DEFAULT);
     }
 
-    @SneakyThrows
-    public void createMapping(String indexName,String type) {
+    public void createMapping(String indexName, String type, List<Property> properties) {
         PutMappingRequest request = new PutMappingRequest(indexName);
         request.type(type);
-        XContentBuilder builder = XContentFactory.jsonBuilder();
-        builder.startObject();
-        {
+        try (XContentBuilder builder = XContentFactory.jsonBuilder()) {
+            builder.startObject();
             builder.startObject("properties");
-            {
-                builder.startObject("message");
-                {
-                    builder.field("type", "text");
-                    builder.field("analyzer", "ik_max_word");
-                    builder.field("search_analyzer", "ik_smart");
+            for (Property property : properties) {
+                builder.startObject(property.getName());
+                builder.field("type", property.getType());
+                String analyzer = property.getAnalyzer();
+                if (null != analyzer) {
+                    builder.field("analyzer", analyzer);
+                }
+                Map<String, String> pluginSupportMap = property.getPluginSupportMap();
+                if (null != pluginSupportMap && CollectionUtils.isNotEmpty(pluginSupportMap.entrySet())) {
+                    for (Map.Entry<String, String> entry : pluginSupportMap.entrySet()) {
+                        builder.field(entry.getKey(), entry.getValue());
+                    }
+                }
+
+                Map<String, String[]> relations = property.getRelations();
+                if (null != relations && CollectionUtils.isNotEmpty(relations.entrySet())) {
+                    builder.startObject("relations");
+                    for (Map.Entry<String, String[]> entry : relations.entrySet()) {
+                        builder.field(entry.getKey(), JsonUtil.getJsonFromObject(entry.getValue()));
+                    }
+                    builder.endObject();
                 }
                 builder.endObject();
             }
             builder.endObject();
+            builder.endObject();
+            request.source(builder);
+        } catch (IOException e) {
+            // TODO 打印日志
+            log.error(e.getMessage(), e);
+            return;
         }
-        builder.endObject();
-        request.source(builder);
-        restHighLevelClient.indices().putMapping(request);
+
+        try {
+            restHighLevelClient.indices().putMapping(request, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            // TODO 打印日志
+            log.error(e.getMessage(), e);
+        }
     }
 }
