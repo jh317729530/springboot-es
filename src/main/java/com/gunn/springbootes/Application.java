@@ -1,24 +1,19 @@
 package com.gunn.springbootes;
 
-import com.gunn.springbootes.business.Field;
+import com.gunn.springbootes.business.FieldQuery;
 import com.gunn.springbootes.elasticsearch.IndexOperation;
-import com.gunn.springbootes.elasticsearch.Property;
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
 
 @SpringBootApplication
 public class Application {
 
 	private static IndexOperation indexOperation;
 
-	private static Field field;
+	private static FieldQuery fieldQuery;
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
@@ -29,7 +24,8 @@ public class Application {
 //		indexOperation.createMapping("test", "testType", properties);
 
 		indexOperation.deleteIndex("field");
-		field.createIndexAndMapping();
+		fieldQuery.createIndexAndMapping();
+		fieldQuery.index();
 	}
 
 	@Resource
@@ -38,7 +34,7 @@ public class Application {
 	}
 
 	@Resource
-	public void setField(Field field) {
-		Application.field = field;
+	public void setField(FieldQuery fieldQuery) {
+		Application.fieldQuery = fieldQuery;
 	}
 }

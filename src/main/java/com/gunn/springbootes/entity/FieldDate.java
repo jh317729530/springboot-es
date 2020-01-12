@@ -1,0 +1,28 @@
+package com.gunn.springbootes.entity;
+
+import lombok.Data;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * @author ganjunhui
+ * @date 2020/1/12 3:19 下午
+ */
+@Data
+public class FieldDate {
+
+    private Integer fieldId;
+
+    private Integer rentType;
+
+    private String relationDate;
+
+    private Map<String, String> joinField;
+
+    {
+        joinField = new HashMap<>();
+        joinField.put("name", "dateChild");
+    }
+
+}

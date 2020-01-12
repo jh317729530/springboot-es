@@ -11,6 +11,8 @@ public class ElasticSearchConst {
         public static final String TEXT = "text";
 
         public static final String JOIN = "join";
+
+        public static final String INTEGER = "integer";
     }
 
     public class Analyzer{
