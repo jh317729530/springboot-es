@@ -49,4 +49,9 @@ public class FieldQuery extends DocumentOperation<Field> {
         field.setStoreName("我的广州空间");
         indexDocument(field);
     }
+
+    public Field getById(String id) {
+        Field byDocId = getByDocId(id);
+        return byDocId;
+    }
 }

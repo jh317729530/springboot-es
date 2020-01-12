@@ -31,6 +31,7 @@ public class Application {
 		fieldQuery.index();
 		fieldDateQuery.index();
 
+		fieldQuery.getById("1234_10");
 	}
 
 	@Resource

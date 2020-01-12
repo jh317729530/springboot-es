@@ -4,7 +4,12 @@ import com.google.common.base.CaseFormat;
 import com.gunn.springbootes.annotation.Ignore;
 import com.gunn.springbootes.annotation.Index;
 import com.gunn.springbootes.annotation.Type;
+import com.gunn.springbootes.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -16,10 +21,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -36,9 +38,9 @@ public abstract class DocumentOperation<T> {
     private RestHighLevelClient restHighLevelClient;
 
     private Class<T> tClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-    private static final Map<Class, List<Field>> FIELDS = new ConcurrentHashMap<>();
-    private static final Map<Class, String> INDEXNAMES = new ConcurrentHashMap<>();
-    private static final Map<Class, String> TYPENAMES = new ConcurrentHashMap<>();
+    private List<Field> fields;
+    private String indexName;
+    private String typeName;
 
 
     /**
@@ -47,31 +49,30 @@ public abstract class DocumentOperation<T> {
     @PostConstruct
     public void cacheFieldsAndIndexNamesAndTypeNames() {
         // 缓存每个字段的Field
-        if (!FIELDS.containsKey(tClass)) {
-            List<Field> fields = Arrays.stream(tClass.getDeclaredFields())
+        if (CollectionUtils.isEmpty(fields)) {
+            fields = Arrays.stream(tClass.getDeclaredFields())
                     .filter(field -> !field.isAnnotationPresent(Ignore.class))
                     .collect(Collectors.toList());
-            FIELDS.put(tClass, fields);
         }
 
         // 缓存索引名
-        if (!INDEXNAMES.containsKey(tClass)) {
+        if (StringUtils.isBlank(indexName)) {
             if (tClass.isAnnotationPresent(Index.class)) {
                 Index index = tClass.getAnnotation(Index.class);
-                INDEXNAMES.put(tClass, index.value());
+                indexName = index.value();
             } else {
                 // 默认不声明的情况下，直接使用类名下划线作为index名
-                INDEXNAMES.put(tClass, CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, tClass.getSimpleName()));
+                indexName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, tClass.getSimpleName());
             }
         }
 
         // 缓存类型名
-        if (!TYPENAMES.containsKey(tClass)) {
+        if (StringUtils.isBlank(typeName)) {
             if (tClass.isAnnotationPresent(Type.class)) {
                 Type type = tClass.getAnnotation(Type.class);
-                TYPENAMES.put(tClass, type.value());
+                typeName = type.value();
             } else {
-                TYPENAMES.put(tClass, CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, tClass.getSimpleName()));
+                typeName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, tClass.getSimpleName());
             }
         }
     }
@@ -84,7 +85,7 @@ public abstract class DocumentOperation<T> {
         if (!(t instanceof BaseDocument)) {
             throw new IllegalArgumentException("index object is not instance of BaseDocument");
         }
-        IndexRequest indexRequest = new IndexRequest(INDEXNAMES.get(tClass), TYPENAMES.get(tClass), ((BaseDocument) t).getId());
+        IndexRequest indexRequest = new IndexRequest(indexName, typeName, ((BaseDocument) t).getId());
         indexRequest.routing(((BaseDocument) t).getRouting());
         XContentBuilder builder = null;
         try {
@@ -101,9 +102,28 @@ public abstract class DocumentOperation<T> {
         }
     }
 
-//    protected T getByDocId(String fieldId) {
-//
-//    }
+    /**
+     * 根据文档id获取文档
+     *
+     * @param id
+     * @return
+     */
+    protected T getByDocId(String id) {
+        GetRequest getRequest = new GetRequest(indexName, typeName, id);
+        GetResponse response = null;
+        try {
+            response = restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);
+            T t = JsonUtil.getObjectFromJson(response.getSourceAsString(), tClass);
+            ((BaseDocument) t).setId(id);
+            ((BaseDocument) t).setIndex(indexName);
+            ((BaseDocument) t).setVersion(response.getVersion());
+            ((BaseDocument) t).setType(typeName);
+            return t;
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            return null;
+        }
+    }
 
     /**
      * 将实体类型转换为对应的builder
@@ -114,7 +134,6 @@ public abstract class DocumentOperation<T> {
     private XContentBuilder entityToBuilder(T t) throws Exception {
         try (XContentBuilder builder = XContentFactory.jsonBuilder()) {
             builder.startObject();
-            List<Field> fields = FIELDS.get(tClass);
             for (Field field : fields) {
                 field.setAccessible(true);
                 if (!field.isAnnotationPresent(Ignore.class)) {

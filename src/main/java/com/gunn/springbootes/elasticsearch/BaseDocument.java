@@ -15,7 +15,7 @@ public class BaseDocument {
 
     protected String id;
 
-    protected String version;
+    protected Long version;
 
     protected String routing;
 }
