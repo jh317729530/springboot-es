@@ -3,6 +3,7 @@ package com.gunn.springbootes.elasticsearch;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
@@ -54,7 +55,7 @@ public class IndexOperation {
                 builder.startObject(property.getName());
                 builder.field("type", property.getType());
                 String analyzer = property.getAnalyzer();
-                if (null != analyzer) {
+                if (StringUtils.isNotBlank(analyzer)) {
                     builder.field("analyzer", analyzer);
                 }
                 Map<String, String> pluginSupportMap = property.getPluginSupportMap();
