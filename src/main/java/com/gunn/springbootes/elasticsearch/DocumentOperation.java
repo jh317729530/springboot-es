@@ -96,7 +96,7 @@ public abstract class DocumentOperation<T> {
         }
         indexRequest.source(builder);
         try {
-            restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
+            restHighLevelClient.index(indexRequest);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
@@ -112,7 +112,7 @@ public abstract class DocumentOperation<T> {
         GetRequest getRequest = new GetRequest(indexName, typeName, id);
         GetResponse response = null;
         try {
-            response = restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);
+            response = restHighLevelClient.get(getRequest);
             T t = JsonUtil.getObjectFromJson(response.getSourceAsString(), tClass);
             ((BaseDocument) t).setId(id);
             ((BaseDocument) t).setIndex(indexName);

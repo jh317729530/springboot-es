@@ -36,13 +36,13 @@ public class IndexOperation {
         createIndexRequest.settings(Settings.builder()
                 .put("index.number_of_shards", 1)
                 .put("index.number_of_replicas", 1));
-        restHighLevelClient.indices().create(createIndexRequest, RequestOptions.DEFAULT);
+        restHighLevelClient.indices().create(createIndexRequest);
     }
 
     @SneakyThrows
     public void deleteIndex(String indexName) {
         DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest(indexName);
-        restHighLevelClient.indices().delete(deleteIndexRequest, RequestOptions.DEFAULT);
+        restHighLevelClient.indices().delete(deleteIndexRequest);
     }
 
     public void createMapping(String indexName, String type, List<Property> properties) {
@@ -81,7 +81,7 @@ public class IndexOperation {
         }
 
         try {
-            restHighLevelClient.indices().putMapping(request, RequestOptions.DEFAULT);
+            restHighLevelClient.indices().putMapping(request);
         } catch (IOException e) {
             // TODO 打印日志
             log.error(e.getMessage(), e);

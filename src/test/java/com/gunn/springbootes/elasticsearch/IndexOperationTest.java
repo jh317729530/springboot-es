@@ -67,9 +67,9 @@ public class IndexOperationTest {
         GetMappingsRequest getMappingsRequest = new GetMappingsRequest();
         getMappingsRequest.indices(indexName);
         getMappingsRequest.types(typeName);
-        GetMappingsResponse mapping = restHighLevelClient.indices().getMapping(getMappingsRequest, RequestOptions.DEFAULT);
-        MappingMetaData mappingMetaData = mapping.getMappings().get(indexName).get(typeName);
-        Map<String, Object> sourceAsMap = mappingMetaData.getSourceAsMap();
+//        GetMappingsResponse mapping = restHighLevelClient.(getMappingsRequest, RequestOptions.DEFAULT);
+//        MappingMetaData mappingMetaData = mapping.getMappings().get(indexName).get(typeName);
+//        Map<String, Object> sourceAsMap = mappingMetaData.getSourceAsMap();
         System.out.println();
     }
 }
