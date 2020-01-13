@@ -2,10 +2,7 @@ package com.gunn.springbootes.elasticsearch;
 
 import com.google.common.collect.Maps;
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsRequest;
-import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse;
-import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +15,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
