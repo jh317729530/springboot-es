@@ -11,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
@@ -21,8 +20,9 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -41,7 +41,6 @@ public abstract class DocumentOperation<T> {
     private List<Field> fields;
     private String indexName;
     private String typeName;
-
 
     /**
      * 在该类实例化后，缓存class的一些信息，减少多次使用反射带来的性能问题
@@ -156,6 +155,8 @@ public abstract class DocumentOperation<T> {
             Object o = field.get(t);
             if (Date.class.equals(fieldClazz)) {
                 builder.timeField(name, o);
+            } else if (List.class.equals(fieldClazz)) {
+                builder.field(name, ((List) o).stream().map(JsonUtil::objectToMap).collect(Collectors.toList()));
             } else {
                 builder.field(name, o);
             }

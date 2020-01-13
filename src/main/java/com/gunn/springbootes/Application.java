@@ -3,6 +3,7 @@ package com.gunn.springbootes;
 import com.gunn.springbootes.business.FieldDateQuery;
 import com.gunn.springbootes.business.FieldQuery;
 import com.gunn.springbootes.elasticsearch.IndexOperation;
+import com.gunn.springbootes.entity.Field;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -31,7 +32,9 @@ public class Application {
 		fieldQuery.index();
 		fieldDateQuery.index();
 
-		fieldQuery.getById("1234_10");
+		Field byId = fieldQuery.getById("1234_10");
+
+		System.out.println("end");
 	}
 
 	@Resource

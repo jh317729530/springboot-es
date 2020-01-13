@@ -6,8 +6,8 @@ import com.gunn.springbootes.annotation.Type;
 import com.gunn.springbootes.elasticsearch.BaseDocument;
 import lombok.Data;
 
-import java.lang.annotation.Target;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,6 +31,8 @@ public class Field extends BaseDocument {
     private Integer rentType;
 
     private Map<String, String> joinField;
+
+    private List<FieldDate> fieldDates;
 
     {
         joinField = new HashMap<>();

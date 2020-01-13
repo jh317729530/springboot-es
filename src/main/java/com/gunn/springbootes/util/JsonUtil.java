@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * @author ganjunhui
@@ -49,6 +50,10 @@ public class JsonUtil {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static Map<String, Object> objectToMap(Object object) {
+        return objectMapper.convertValue(object, Map.class);
     }
 
     /**
