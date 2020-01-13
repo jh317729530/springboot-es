@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 public abstract class DocumentOperation<T> {
 
     @Resource
-    private RestHighLevelClient restHighLevelClient;
+    protected RestHighLevelClient restHighLevelClient;
 
     private Class<T> tClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     private List<Field> fields;

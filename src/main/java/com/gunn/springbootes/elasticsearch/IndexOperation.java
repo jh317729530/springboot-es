@@ -34,7 +34,7 @@ public class IndexOperation {
         CreateIndexRequest createIndexRequest = new CreateIndexRequest(indexName);
         createIndexRequest.settings(Settings.builder()
                 .put("index.number_of_shards", 1)
-                .put("index.number_of_replicas", 1));
+                .put("index.number_of_replicas", 0));
         restHighLevelClient.indices().create(createIndexRequest);
     }
 

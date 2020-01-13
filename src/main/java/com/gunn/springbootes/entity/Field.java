@@ -39,8 +39,9 @@ public class Field extends BaseDocument {
         joinField.put("name", "parent");
     }
 
-    @Override
-    public String getRouting() {
-        return fieldId + "_" + rentType;
+    @Data
+    public static class FieldDate {
+        private String relationDate;
+        private Integer rentType;
     }
 }

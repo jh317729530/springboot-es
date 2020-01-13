@@ -5,10 +5,20 @@ import com.gunn.springbootes.elasticsearch.DocumentOperation;
 import com.gunn.springbootes.elasticsearch.IndexOperation;
 import com.gunn.springbootes.elasticsearch.Property;
 import com.gunn.springbootes.entity.Field;
-import com.gunn.springbootes.entity.FieldDate;
+import com.gunn.springbootes.util.JsonUtil;
+import org.apache.lucene.search.join.QueryBitSetProducer;
+import org.apache.lucene.search.join.ScoreMode;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,12 +60,13 @@ public class FieldQuery extends DocumentOperation<Field> {
         field.setRentType(10);
         field.setFieldName("我的广州场地");
         field.setStoreName("我的广州空间");
+        field.setRouting(null);
 
-        List<FieldDate> fieldDates = new ArrayList<>();
-        FieldDate fieldDate = new FieldDate();
+        List<Field.FieldDate> fieldDates = new ArrayList<>();
+        Field.FieldDate fieldDate = new Field.FieldDate();
         fieldDate.setRelationDate("2020-01-13");
         fieldDate.setRentType(10);
-        FieldDate fieldDate1 = new FieldDate();
+        Field.FieldDate fieldDate1 = new Field.FieldDate();
         fieldDate1.setRelationDate("2020-01-14");
         fieldDate1.setRentType(10);
         fieldDates.add(fieldDate);
@@ -67,5 +78,32 @@ public class FieldQuery extends DocumentOperation<Field> {
     public Field getById(String id) {
         Field byDocId = getByDocId(id);
         return byDocId;
+    }
+
+    public Field searchByFeildDates(String relationDate) {
+        SearchRequest searchRequest = new SearchRequest("field");
+        searchRequest.types("field");
+        searchRequest.searchType(SearchType.DFS_QUERY_THEN_FETCH);
+        SearchSourceBuilder query = SearchSourceBuilder.searchSource()
+                .query(QueryBuilders.nestedQuery(
+                        "fieldDates",
+                        QueryBuilders.boolQuery()
+                                .must(QueryBuilders.matchQuery("fieldDates.relationDate", relationDate)),
+                        ScoreMode.None));
+
+
+        searchRequest.source(query);
+
+        try {
+            System.out.println(searchRequest.source().toString());
+            SearchResponse searchResponse = restHighLevelClient.search(searchRequest);
+            SearchHits hits = searchResponse.getHits();
+            SearchHit hit = hits.getHits()[0];
+            System.out.println(hit.getSourceAsString());
+            return JsonUtil.getObjectFromJson(hit.getSourceAsString(), Field.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
