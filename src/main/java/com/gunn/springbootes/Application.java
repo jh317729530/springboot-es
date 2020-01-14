@@ -9,6 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.annotation.Resource;
+import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
 public class Application {
@@ -35,7 +36,7 @@ public class Application {
 
 		Field byId = fieldQuery.getById("1234_10");
 		// 执行查询时，文档并未完全插入，所以线程休眠一段时间
-		Thread.sleep(2000);
+		TimeUnit.SECONDS.sleep(2);
 		Field field = fieldQuery.searchByFeildDates("2020-01-13");
 		System.out.println("end");
 	}
