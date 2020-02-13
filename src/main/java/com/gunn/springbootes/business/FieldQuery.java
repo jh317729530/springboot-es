@@ -37,6 +37,9 @@ public class FieldQuery extends DocumentOperation<Field> {
     private IndexOperation indexOperation;
 
 
+    /**
+     * 创建索引和mapping
+     */
     public void createIndexAndMapping() {
         indexOperation.createIndex("field");
 
@@ -53,6 +56,9 @@ public class FieldQuery extends DocumentOperation<Field> {
         indexOperation.createMapping("field", "field", properties);
     }
 
+    /**
+     * 插入文档
+     */
     public void index() {
         Field field = new Field();
         field.setId("1234_10");
@@ -75,11 +81,21 @@ public class FieldQuery extends DocumentOperation<Field> {
         indexDocument(field);
     }
 
+    /**
+     * 根据文档id查询
+     * @param id
+     * @return
+     */
     public Field getById(String id) {
         Field byDocId = getByDocId(id);
         return byDocId;
     }
 
+    /**
+     * 通过场地开放日期查询到一个场地
+     * @param relationDate
+     * @return
+     */
     public Field searchByFeildDates(String relationDate) {
         SearchRequest searchRequest = new SearchRequest("field");
         searchRequest.types("field");

@@ -74,7 +74,6 @@ public class IndexOperation {
             builder.endObject();
             request.source(builder);
         } catch (IOException e) {
-            // TODO 打印日志
             log.error(e.getMessage(), e);
             return;
         }
@@ -82,7 +81,6 @@ public class IndexOperation {
         try {
             restHighLevelClient.indices().putMapping(request);
         } catch (IOException e) {
-            // TODO 打印日志
             log.error(e.getMessage(), e);
         }
     }
